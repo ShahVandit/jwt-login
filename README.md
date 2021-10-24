@@ -1,8 +1,7 @@
-# jwt-login
+# Social Media API
 
-Methods used: PUT,GET,POST
+Methods used: PUT,GET,POST,DELETE
 
-Protected Route: '/dashboard'
 
 used after logging in:
   jwt tokens and cookies
