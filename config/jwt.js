@@ -16,8 +16,14 @@ const verifyToken = (req, res, next) => {
     } catch (err) {
       res.status(400).json({ error: err });
     }
+    // console.log(accessToken);
     return accessToken;
   }
 };
 
-module.exports = { verifyToken };
+const decodeToken = (token) => {
+  const payload = jwt.decode(token);
+  return payload.username;
+};
+
+module.exports = { verifyToken, decodeToken };
