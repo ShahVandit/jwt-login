@@ -4,6 +4,7 @@ const passport = require("passport");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const users = require("./routes/users");
+const posts = require("./routes/posts");
 const db = require("./config/key").MongoURI;
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.json());
 app.use("/", users);
+app.use("/users", posts);
 
 mongoose
   .connect(db, { useNewUrlParser: true, useUnifiedTopology: true })

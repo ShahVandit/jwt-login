@@ -1,6 +1,13 @@
 const jwt = require("jsonwebtoken");
 const { JwtKey } = require("./key");
 
+const signToken = (email, username) => {
+  const token = jwt.sign({ email, username }, JwtKey, {
+    expiresIn: "1h",
+  });
+  return token;
+};
+
 const verifyToken = (req, res, next) => {
   const accessToken = req.cookies["jwt-token"];
   if (!accessToken) {
@@ -16,7 +23,6 @@ const verifyToken = (req, res, next) => {
     } catch (err) {
       res.status(400).json({ error: err });
     }
-    // console.log(accessToken);
     return accessToken;
   }
 };
@@ -26,4 +32,4 @@ const decodeToken = (token) => {
   return payload.username;
 };
 
-module.exports = { verifyToken, decodeToken };
+module.exports = { verifyToken, decodeToken, signToken };
