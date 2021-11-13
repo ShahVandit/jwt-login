@@ -3,7 +3,6 @@ const posts = require("../models/posts");
 const { verifyToken, decodeToken } = require("../config/jwt");
 const { getPosts, addPost, addComment } = require("../config/dbops");
 const uploads = require("../config/fileupload");
-const { put } = require("got");
 
 const router = express.Router();
 
@@ -13,17 +12,19 @@ router.get("/dashboard", verifyToken, (req, res) => {
   });
 });
 
+// Adding a new post
 router.post("/addpost", verifyToken, uploads.single("image"), (req, res) => {
-  const username = decodeToken(req.cookies["jwt-token"]);
+  const email = decodeToken(req.cookies["jwt-token"]);
   const post = req.body.post;
   if (!post || !req.file) {
     res.status(403).json({ error: "Please enter post" });
   } else {
     const imgname1 = `${Date.now()}_${req.file.originalname}`;
-    const addtoDB = addPost(username, post, imgname1);
+    const addtoDB = addPost(email, post, imgname1);
     res.status(200).json({ message: "Post successful" });
   }
 });
+
 
 router.get("/posts", verifyToken, (req, res) => {
   posts
@@ -38,6 +39,7 @@ router.get("/posts", verifyToken, (req, res) => {
     .catch((err) => res.status(403).json({ error: err }));
 });
 
+// Specific post
 router.get("/posts/:id", verifyToken, (req, res) => {
   var id = req.params.id;
   posts
@@ -52,8 +54,9 @@ router.get("/posts/:id", verifyToken, (req, res) => {
     .catch((err) => res.status(403).json({ error: err }));
 });
 
+// Add like or comment
 router.post("/posts/:id", verifyToken, (req, res) => {
-  const username = decodeToken(req.cookies["jwt-token"]);
+  const email = decodeToken(req.cookies["jwt-token"]);
   const id = req.params.id;
   const like = req.body.like;
   const comments = req.body.comment;
@@ -63,11 +66,11 @@ router.post("/posts/:id", verifyToken, (req, res) => {
     posts
       .findById(id)
       .then((post) => {
-        const newComment = { user: username, comment: comments };
+        const newComment = { user: email, comment: comments };
         const oldComments = post.comment;
         oldComments.push(newComment);
         if (post) {
-          const newLike = username;
+          const newLike = email;
           const oldLikes = post.likedby;
           oldLikes.push(newLike);
           addComment(id, like, oldComments, oldLikes);
@@ -80,10 +83,11 @@ router.post("/posts/:id", verifyToken, (req, res) => {
   }
 });
 
+// Own posts
 router.get("/myposts", verifyToken, (req, res) => {
-  const username = decodeToken(req.cookies["jwt-token"]);
+  const email = decodeToken(req.cookies["jwt-token"]);
   posts
-    .findOne({ uname: username })
+    .findOne({ uname:email })
     .then((post) => {
       if (post) {
         res.status(200).json({ postsbyme: post });
@@ -94,10 +98,11 @@ router.get("/myposts", verifyToken, (req, res) => {
     .catch((err) => res.status(400).json({ error: err }));
 });
 
+// Specific own post
 router.get("/myposts/:id", verifyToken, (req, res) => {
   const id = req.params.id;
-  const username = decodeToken(req.cookies["jwt-token"]);
-  posts.find({ _id: id, uname: username }).then((post) => {
+  const email = decodeToken(req.cookies["jwt-token"]);
+  posts.find({ _id: id, uname: email }).then((post) => {
     if (post.length == 0) {
       res.status(400).json({ error: "This is not your post" });
     } else {
@@ -106,15 +111,16 @@ router.get("/myposts/:id", verifyToken, (req, res) => {
   });
 });
 
+// Edit own post
 router.put("/myposts/:id", verifyToken, uploads.single("image"), (req, res) => {
   const id = req.params.id;
   const editpost = req.body.post;
   const img = req.file;
-  const username = decodeToken(req.cookies["jwt-token"]);
+  const email = decodeToken(req.cookies["jwt-token"]);
   if (!editpost || !img) {
     res.status(400).json({ error: "Please enter posts" });
   }
-  posts.find({ _id: id, uname: username }).then((post) => {
+  posts.find({ _id: id, uname: email }).then((post) => {
     if (post.length == 0) {
       res.status(400).json({ error: "This is not your post" });
     } else {
@@ -129,10 +135,11 @@ router.put("/myposts/:id", verifyToken, uploads.single("image"), (req, res) => {
   });
 });
 
+// Deleting the post
 router.delete("/myposts/:id", verifyToken, (req, res) => {
   const id = req.params.id;
-  const username = decodeToken(req.cookies["jwt-token"]);
-  posts.find({ _id: id, uname: username }).then((post) => {
+  const email = decodeToken(req.cookies["jwt-token"]);
+  posts.find({ _id: id, uname: email }).then((post) => {
     if (post.length == 0) {
       res.status(400).json({ error: "This is not your post" });
     } else {

@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const { JwtKey } = require("./key");
 
-const signToken = (email, username) => {
-  const token = jwt.sign({ email, username }, JwtKey, {
+const signToken = (email) => {
+  const token = jwt.sign({ email }, JwtKey, {
     expiresIn: "1h",
   });
   return token;
@@ -29,7 +29,7 @@ const verifyToken = (req, res, next) => {
 
 const decodeToken = (token) => {
   const payload = jwt.decode(token);
-  return payload.username;
+  return payload.email;
 };
 
 module.exports = { verifyToken, decodeToken, signToken };

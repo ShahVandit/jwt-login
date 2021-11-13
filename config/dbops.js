@@ -24,16 +24,18 @@ const addUser = (email, password, username) => {
   );
 };
 
-function addPost(username, post, imgname) {
+function addPost(email, post, imgname) {
   const newPost = new posts({
-    uname: username,
+    uname: email,
     post: post,
     imgname: imgname,
   });
-  newPost.save().then((post) => {
+  newPost.save()
+  .then((post) => {
     console.log(post);
     return post;
-  });
+  })
+  .catch((err)=>console.log(err));
 }
 
 function addComment(id, like, commentby, likedby) {

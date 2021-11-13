@@ -1,6 +1,5 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const passport = require("passport");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const users = require("./routes/users");
@@ -9,7 +8,7 @@ const db = require("./config/key").MongoURI;
 const app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use("/", users);

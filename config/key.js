@@ -1,4 +1,5 @@
 module.exports = {
-  MongoURI: "Mongo URI",
+  MongoURI:
+    "<MongoURI>",
   JwtKey: "secret",
 };
